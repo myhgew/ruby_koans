@@ -29,8 +29,43 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 #
 # Your goal is to write the score method.
 
+def calculate_point_for_count_three(i)
+  case i
+  when 1-1
+    1000 # A set of three ones is 1000 points
+  else
+    100 * (i + 1) # A set of three numbers (other than ones) is worth 100 times the number
+  end
+end
+
+def calculate_point_for_count_less_than_three(count, i)
+  point = case i
+  when 1-1
+    100 # A one (that is not part of a set of three) is worth 100 points.
+  when 5-1
+    50 # A five (that is not part of a set of three) is worth 50 points.
+  else
+    0 # Everything else is worth 0 points.
+  end
+  point * count
+end
+
 def score(dice)
   # You need to write this method
+
+  # Array for the count of each number 1 - 6
+  counts = Array.new(6, 0)
+  dice.each { |n| counts[n-1] += 1  }
+
+  # Array for each number
+  point_for_each_number = counts.map.with_index do |count, i|
+    count_three = count / 3
+    count_less_than_three = count % 3
+    calculate_point_for_count_three(i) * count_three + calculate_point_for_count_less_than_three(count_less_than_three, i)
+  end
+
+  # Sum it up
+  point_for_each_number.reduce(0) { |sum, n| sum + n }
 end
 
 class AboutScoringProject < Neo::Koan
